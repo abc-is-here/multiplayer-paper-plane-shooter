@@ -1,0 +1,220 @@
+[gd_scene load_steps=19 format=3 uid="uid://c6dbc3xkmonin"]
+
+[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_wfq8c"]
+[ext_resource type="Script" path="res://scenes/camera_shake.gd" id="2_7ljad"]
+[ext_resource type="Texture2D" uid="uid://ba08c0lgt3805" path="res://Sprites/Tiles/star.png" id="3_nur6x"]
+[ext_resource type="FontFile" uid="uid://bjx27wrjhh8i" path="res://ZenDots-Regular.ttf" id="7_2fais"]
+[ext_resource type="Script" path="res://scripts/networkManage.gd" id="88_ya6hd"]
+[ext_resource type="Script" path="res://scripts/weapon_heat.gd" id="90_6dukh"]
+[ext_resource type="Script" path="res://scenes/score_ui.gd" id="91_iwdke"]
+
+[sub_resource type="Curve" id="Curve_txx01"]
+_data = [Vector2(0.0114504, 0.984906), 0.0, 0.0, 0, 0, Vector2(0.744275, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.501887), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_2wct4"]
+offsets = PackedFloat32Array(0, 0.383929, 0.625, 0.830357)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="Gradient" id="Gradient_r7vs2"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 0.2)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nalo7"]
+gradient = SubResource("Gradient_r7vs2")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4jt1q"]
+bg_color = Color(0.0901961, 0.0901961, 0.0901961, 0.756863)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1yqyb"]
+bg_color = Color(0.385485, 0.691131, 0.213313, 1)
+
+[sub_resource type="Gradient" id="Gradient_c4prf"]
+offsets = PackedFloat32Array(0, 0.628099, 1)
+colors = PackedColorArray(0, 1, 0, 1, 0.662745, 0.65098, 0.14902, 1, 1, 0, 0.419608, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4k3et"]
+bg_color = Color(0.309804, 0.301961, 0.305882, 0.658824)
+
+[sub_resource type="LabelSettings" id="LabelSettings_tahvi"]
+font = ExtResource("7_2fais")
+font_size = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0cqnb"]
+bg_color = Color(0.289232, 0.671869, 0.649146, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wxaeh"]
+font = ExtResource("7_2fais")
+font_size = 24
+shadow_size = 22
+shadow_color = Color(0, 0, 0, 0.368627)
+
+[node name="main" type="Node2D"]
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("1_wfq8c")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.5, 1.5)
+script = ExtResource("2_7ljad")
+
+[node name="env" type="Node" parent="."]
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="env"]
+amount = 128
+lifetime = 5.0
+texture = ExtResource("3_nur6x")
+emission_shape = 3
+emission_rect_extents = Vector2(2048, 1200)
+gravity = Vector2(0, 0)
+scale_amount_max = 2.0
+scale_amount_curve = SubResource("Curve_txx01")
+color_ramp = SubResource("Gradient_2wct4")
+
+[node name="haze" type="Sprite2D" parent="env"]
+position = Vector2(-13, -7.00001)
+scale = Vector2(3.14844, 462)
+texture = SubResource("GradientTexture1D_nalo7")
+
+[node name="net" type="Node" parent="."]
+script = ExtResource("88_ya6hd")
+
+[node name="netUI" type="Panel" parent="net"]
+z_index = 99
+offset_left = -145.0
+offset_top = -99.0
+offset_right = 145.0
+offset_bottom = 102.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="net/netUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 13.0
+offset_top = 21.0
+offset_right = -20.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StartSever" type="Button" parent="net/netUI/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7_2fais")
+text = "Start Server"
+
+[node name="JoinServer" type="Button" parent="net/netUI/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7_2fais")
+text = "Join Server"
+
+[node name="IPinp" type="LineEdit" parent="net/netUI/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7_2fais")
+text = "localhost"
+placeholder_text = "Enter your IP Adress..."
+
+[node name="PortInp" type="LineEdit" parent="net/netUI/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7_2fais")
+text = "8080"
+placeholder_text = "Port..."
+
+[node name="NameInp" type="LineEdit" parent="net/netUI/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("7_2fais")
+placeholder_text = "Username..."
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="net"]
+_spawnable_scenes = PackedStringArray("res://scenes/player.tscn", "res://scenes/projectile.tscn")
+spawn_path = NodePath("../spawn_nodes")
+
+[node name="spawn_nodes" type="Node2D" parent="net"]
+
+[node name="WeaponHeat" type="ProgressBar" parent="."]
+z_index = 99
+offset_left = -230.0
+offset_top = -206.0
+offset_right = -202.0
+offset_bottom = -112.0
+theme_override_styles/background = SubResource("StyleBoxFlat_4jt1q")
+theme_override_styles/fill = SubResource("StyleBoxFlat_1yqyb")
+fill_mode = 3
+show_percentage = false
+script = ExtResource("90_6dukh")
+fill_color = SubResource("Gradient_c4prf")
+
+[node name="scoreUI" type="Panel" parent="."]
+z_index = 99
+offset_left = -388.0
+offset_top = -206.0
+offset_right = -235.0
+offset_bottom = -113.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_4k3et")
+script = ExtResource("91_iwdke")
+
+[node name="PlayerScores" type="Label" parent="scoreUI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -72.5
+offset_top = -45.5
+offset_right = 49.5
+offset_bottom = 43.5
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_tahvi")
+
+[node name="end" type="Panel" parent="."]
+visible = false
+z_index = 98
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -401.0
+offset_top = -237.0
+offset_right = 383.0
+offset_bottom = 226.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0cqnb")
+
+[node name="win_text" type="Label" parent="end"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -122.0
+offset_top = -57.5
+offset_right = 123.0
+offset_bottom = -34.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Player_name has won the game"
+label_settings = SubResource("LabelSettings_wxaeh")
+
+[node name="playAgain" type="Button" parent="end"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -64.0
+offset_top = 0.5
+offset_right = 64.0
+offset_bottom = 42.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("7_2fais")
+theme_override_font_sizes/font_size = 24
+text = "Play Again"
+
+[connection signal="pressed" from="net/netUI/VBoxContainer/StartSever" to="net" method="start_host"]
+[connection signal="pressed" from="net/netUI/VBoxContainer/JoinServer" to="net" method="start_client"]
+[connection signal="text_changed" from="net/netUI/VBoxContainer/NameInp" to="net" method="_on_name_inp_text_changed"]
+[connection signal="pressed" from="end/playAgain" to="GameManager" method="_on_play_again_pressed"]

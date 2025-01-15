@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://ug7eh8q7hwm0"]
+
+[ext_resource type="Script" path="res://scenes/projectile.gd" id="1_2q3be"]
+[ext_resource type="Texture2D" uid="uid://chwg46g5oa8wr" path="res://Sprites/Tiles/tile_0000.png" id="1_7i5vk"]
+[ext_resource type="Texture2D" uid="uid://bd5c6fjh7bek2" path="res://Sprites/Tiles/tile_0002.png" id="3_fioa6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_23mxs"]
+radius = 8.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_22oh3"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="Projectile" type="Area2D"]
+script = ExtResource("1_2q3be")
+
+[node name="sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_7i5vk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_23mxs")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_22oh3")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(0.435294, 1, 1, 1)
+energy = 16.0
+texture = ExtResource("3_fioa6")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
